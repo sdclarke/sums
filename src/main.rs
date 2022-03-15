@@ -2,7 +2,6 @@ use std::env::args;
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error as IoError, ErrorKind};
-//use std::num::ParseIntError;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Get the filename which will be the second element of the args
@@ -22,6 +21,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             l.and_then(|v| {
                 v.parse::<i64>()
                     // Map the error to std::io::Error to make `and_then` work
+                    // I must admit I don't totally understand why this is necessary, I think I
+                    // gathered it was requrired by the definition of `and_then` that the Result
+                    // returned has the same kind of Error as the original?
                     .map_err(|e| IoError::new(ErrorKind::InvalidData, e))
             })
         })
@@ -38,4 +40,19 @@ fn main() -> Result<(), Box<dyn Error>> {
         .sum();
     println!("The sum is {:?}", sum);
     Ok(())
+
+    /*
+     * Here is what I did originally, which to me seems to me to be more readable and
+     * understandable due to the weird stuff I had to do with the map method above. If the lines
+     * came out of the `.lines()` method of the BufReader just as plain Strings rather than Results
+     * I think the map method would've been a lot cleaner and more understandable
+     *
+     * To be clear, these lines would replace the entire `let sum ...` statement
+    let mut sum: i64 = 0;
+    for line in file.lines() {
+        let line = line?;
+        let number: i64 = line.parse()?;
+        sum += number;
+    }
+     */
 }
