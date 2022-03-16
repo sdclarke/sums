@@ -32,8 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             // Turn the error into something nicer to output
             format!(
                 "There was a problem parsing the numbers in the file `{}`: {}",
-                filename,
-                e.to_string()
+                filename, e
             )
         })?
         .iter() // Convert to iterator and sum
